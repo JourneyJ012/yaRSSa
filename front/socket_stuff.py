@@ -6,8 +6,13 @@ PORT = 8080
 
 def handle_request(client_socket):
     request_data = client_socket.recv(1024).decode()
-    request_lines = request_data.split("\r\n")
-    method, path, _ = request_lines[0].split()
+    print("Received request data:", repr(request_data))
+    try: #if request_lines but less error prone
+        request_lines = request_data.split("\r\n")
+        method, path, _ = request_lines[0].split()
+    except:
+        client_socket.sendall(b'HTTP/1.1 400 Bad Request\r\n\r\n')
+    
     
     if method == "GET":
         if path == "/style.css":
@@ -17,7 +22,7 @@ def handle_request(client_socket):
             except FileNotFoundError:
                 response_data = "CSS file not found"
                 print(response_data)
-            response = f"HTTP/1.1 200 OK\r\nContent-Type: text/css\r\nContent-Length: {len(response_data)}\r\n\r\n{response_data}" #Css
+            response = f"HTTP/1.1 200 OK\r\nContent-Type: text/css\r\nContent-Length: {len(response_data)}\r\n\r\n{response_data}" #CSS
         else:
             try:
                 with open("Front/index.html", "r") as f:
