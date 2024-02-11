@@ -20,14 +20,18 @@ https://python.org
 
 3. Install dependencies
 
-pip install -r requirements.txt
+`pip install -r requirements.txt`
 
 ## Usage
 
 ### start.bat
 Run the file
 ### start.sh
+```
 chmod +x start.sh
 ./start.sh
+```
 
-Got an error? Send your error.txt file!
+## Errors
+The reporting system is yet to be needed. Both `start.bat` and `start.sh` only writes the exception to `error.txt` so far. 
+The reason this sucks is because the software itself doesn't work yet.
