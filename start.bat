@@ -1,2 +1,2 @@
 @echo off
-python back/start.py
+python front/socket_stuff.py > CON 2>error.txt
