@@ -28,7 +28,7 @@ https://python.org
 
 ### start.bat
 
-./start.bat
+`./start.bat`
 
 ### start.sh
 
