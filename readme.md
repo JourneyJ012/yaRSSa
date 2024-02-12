@@ -23,14 +23,13 @@ https://python.org
 
 `git clone https://github.com/JourneyJ012/yaRSSa`
 
-3. Install dependencies
-
-`pip install -r requirements.txt`
 
 ## Usage
 
 ### start.bat
-Run the file
+
+./start.bat
+
 ### start.sh
 
 ```
