@@ -9,9 +9,9 @@ Nothing yet. This is a beginner project for me, where I'm learning git, socket, 
 
 ## Known Problems
 
-Doesn't work on Brave browser
-Doesn't work, at all.
-Python may keep the port used after throwing an error.
+- Doesn't work on Brave browser
+- Doesn't work, at all.
+- Python may keep the port used after throwing an error.
 
 ## Installation
 
