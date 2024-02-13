@@ -8,8 +8,8 @@ def parse_url(url: str, dir: str):
     feed = requests.get(url=url)
     root = ET.fromstring(str(feed.content.decode()))
     
-    with open("Back/test.xml", "w") as f:
-        f.write(str(feed.content.decode()))
+    #with open("Back/test.xml", "w") as f:          Debugging for
+    #    f.write(str(feed.content.decode()))        RSS feeds :)
     
     items = root.findall(".//item")
     results = []
@@ -37,6 +37,8 @@ def get_choices(dir: str):
 
 if __name__ == "__main__":
 
-    parse_url(
-        url="http://127.0.0.1:9117/api/v2.0/indexers/1337x/results/torznab/api?apikey=979bnwxk5av7s2lubes71ujymc60m90u&t=search&cat=&q=EPUB",
-        dir="back/user_choices.txt")
+    
+    with open("test.txt","w") as f:
+        f.write(str(parse_url(
+        url="https://feeds.skynews.com/feeds/rss/uk.xml",
+        dir="back/user_choices.txt")))
