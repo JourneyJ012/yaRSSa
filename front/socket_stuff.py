@@ -4,7 +4,7 @@ import sys
 import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'back')))
 from file_management import add_url #IMPORT SOMETHING LATER
-
+from RSS_stuff import parse_url
 
 HOST = "127.0.0.1"
 PORT = 8080
@@ -16,35 +16,57 @@ def handle_request(client_socket) -> None:
         request_lines = request_data.split("\r\n")
         method, path, _ = request_lines[0].split()
     except:
-        client_socket.sendall(b'HTTP/1.1 400 Bad Request\r\n\r\n')
+        client_socket.sendall(b'HTTP/1.1 500 Internal Server Error')
     
-    
+    try:
+        if method in locals() and path in locals():
+            print("Variables method and path were found!")
+    except UnboundLocalError:
+        client_socket.sendall(b'HTTP/1.1 500 Internal Server Error')
+        print(f"Variables method and path were not found!")
+        return None
+
     if method == "GET":
         if path == "/style.css":
             try:
                 with open("Front/style.css", "r") as f:
                     response_data = f.read()
+                response = f"HTTP/1.1 200 OK\r\nContent-Type: text/css\r\nContent-Length: {len(response_data)}\r\n\r\n{response_data}" #CSS
             except FileNotFoundError:
                 response_data = "CSS file not found"
-                #print(response_data)
-            response = f"HTTP/1.1 200 OK\r\nContent-Type: text/css\r\nContent-Length: {len(response_data)}\r\n\r\n{response_data}" #CSS
+                response = f"HTTP/1.1 404 Not Found"
         else:
             try:
                 with open("Front/index.html", "r") as f:
                     response_data = f.read()
+                response = f"HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nContent-Length: {len(response_data)}\r\n\r\n{response_data}"
             except FileNotFoundError:
                 response_data = "index.html file not found"
-                #print(response_data)
-            response = f"HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nContent-Length: {len(response_data)}\r\n\r\n{response_data}"
-    else: #POST
+                response = f"HTTP/1.1 404 Not Found"
+    elif method == "POST":
         body_start = request_data.find("\r\n\r\n") + len("\r\n\r\n")
         form_data = request_data[body_start:]
-        #print(f"Before: {form_data}")
-        form_data = format_data(form_input=form_data)
-        add_url(dir="Back/user_feeds.txt",url=form_data)
 
-        response_data = f"<h1>Form received:</h1><p>{form_data}</p>"
-        response = f"HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nContent-Length: {len(response_data)}\r\n\r\n{response_data}"
+        # Check which button was clicked
+        if "new_RSS" in request_data:
+            form_data = format_data(form_input=form_data)
+            added = add_url(dir="Back/user_feeds.txt", url=form_data)
+
+            if added == "Already present RSS feed" or added == "Successfully added RSS feed":
+                response_data = f"<h1>Form received:</h1><p>Feed {form_data} added!</p>"
+            else:
+                response_data = f"<h1>Fail!</h1><p>{added}</p>"
+            response = f"HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nContent-Length: {len(response_data)}\r\n\r\n{response_data}"
+
+        elif "get_RSS" in request_data: #Todo: fix EVERYTHING here
+            
+            response_data = parse_url(
+                user_feeds_dir="Back/user_feeds.txt",
+                user_choices_dir="Back/user_choices.txt"
+                )
+            response = f"HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nContent-Length: {len(response_data)}\r\n\r\n{response_data}"
+        else:
+            response = f"HTTP/1.1 500 Internal Server Error"
     
     client_socket.sendall(response.encode())
     client_socket.close()
