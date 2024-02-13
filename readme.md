@@ -25,6 +25,10 @@ https://python.org
 
 `git clone https://github.com/JourneyJ012/yaRSSa`
 
+3. Navigate in
+
+`cd yaRSSa`
+
 
 ## Usage
 
