@@ -1,6 +1,9 @@
 import socket
 import webbrowser
-
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'back')))
+from file_management import add_url #IMPORT SOMETHING LATER
 
 
 HOST = "127.0.0.1"
@@ -38,7 +41,7 @@ def handle_request(client_socket) -> None:
         form_data = request_data[body_start:]
         #print(f"Before: {form_data}")
         form_data = format_data(form_input=form_data)
-        
+        add_url(dir="Back/user_feeds.txt",url=form_data)
 
         response_data = f"<h1>Form received:</h1><p>{form_data}</p>"
         response = f"HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nContent-Length: {len(response_data)}\r\n\r\n{response_data}"
