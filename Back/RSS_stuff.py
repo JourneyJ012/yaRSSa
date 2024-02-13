@@ -33,12 +33,9 @@ def get_choices(dir: str):
         for i in range(0,len(user_choices)):
             user_choices[i] = str(user_choices[i]).strip()
     print(user_choices)
-    return user_choices
+    return user_choices 
 
 if __name__ == "__main__":
-
-    
-    with open("test.txt","w") as f:
-        f.write(str(parse_url(
+    parse_url(
         url="https://feeds.skynews.com/feeds/rss/uk.xml",
-        dir="back/user_choices.txt")))
+        dir="back/user_choices.txt")
