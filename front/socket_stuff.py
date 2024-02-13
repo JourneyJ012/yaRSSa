@@ -1,5 +1,8 @@
 import socket
 import webbrowser
+import sys
+
+
 
 HOST = "127.0.0.1"
 PORT = 8080
@@ -35,6 +38,11 @@ def handle_request(client_socket):
         body_start = request_data.find("\r\n\r\n") + len("\r\n\r\n")
         form_data = request_data[body_start:]
         
+        #backend management here
+        #take URL
+        form_data = form_data.split("=",1) #splits from 1st =, which would be RSS_feed_added = https://example.com/rss/page.xml
+        #make sure it is a URL, so check for HTTP:// or HTTPS:// (not case sensitive)
+        #
 
         response_data = f"<h1>Form received:</h1><p>{form_data}</p>"
         response = f"HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nContent-Length: {len(response_data)}\r\n\r\n{response_data}"
