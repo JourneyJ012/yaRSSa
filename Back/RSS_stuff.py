@@ -13,7 +13,7 @@ def parse_url(user_feeds_dir: str, user_choices_dir: str):
         feed = requests.get(url=url)
         root = ET.fromstring(str(feed.content.decode()))
         
-        with open(f"Back/test_.xml", "w") as f: #TODO: MAKE EVERY RSS FEED HAVE AN OUTPUT
+        with open(f"Back/test.xml", "w") as f: #TODO: MAKE EVERY RSS FEED HAVE AN OUTPUT
             f.write(str(feed.content.decode()))        
         
         items = root.findall(".//item")
@@ -29,7 +29,6 @@ def parse_url(user_feeds_dir: str, user_choices_dir: str):
                     choice_text = found_element.text
                     current_item.append(choice_text)
             results.append(current_item)
-        
     return results
 
 def get_choices(dir: str):
@@ -45,7 +44,6 @@ def get_feeds(dir: str):
         user_feeds = f.readlines()
         for i in range(0,len(user_feeds)):
             user_feeds[i] = str(user_feeds[i]).strip()
-    print(user_feeds)
     return user_feeds 
 
 if __name__ == "__main__":
