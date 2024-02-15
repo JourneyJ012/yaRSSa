@@ -13,8 +13,8 @@ def parse_url(user_feeds_dir: str, user_choices_dir: str):
         feed = requests.get(url=url)
         root = ET.fromstring(str(feed.content.decode()))
         
-        with open(f"Back/test.xml", "w") as f: #TODO: MAKE EVERY RSS FEED HAVE AN OUTPUT
-            f.write(str(feed.content.decode()))        
+        #with open(f"Back/test.xml", "w") as f: #TODO: MAKE EVERY RSS FEED HAVE AN OUTPUT
+        #    f.write(str(feed.content.decode()))        
         
         items = root.findall(".//item")
         
