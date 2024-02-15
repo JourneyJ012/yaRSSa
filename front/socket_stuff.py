@@ -17,6 +17,7 @@ def handle_request(client_socket) -> None:
         method, path, _ = request_lines[0].split()
     except:
         client_socket.sendall(b'HTTP/1.1 500 Internal Server Error')
+        return None
     
     try:
         if method in locals() and path in locals():
@@ -63,10 +64,10 @@ def handle_request(client_socket) -> None:
             feeds = parse_url(
                 user_feeds_dir="Back/user_feeds.txt",
                 user_choices_dir="Back/user_choices.txt"
-                ) #Somewhere between this line and the sending, response_data fucking changes. What magic have I done?
-            with open("Front/style.css","r") as f:
-                pass
-            response_data = f"<body><h1>Feeds</h1><p>{feeds}</p></body>"
+                )
+            with open("Front/style.css","r") as style:
+                response_data = f"<head><style>{style}</style></head><body><h1>Feeds</h1><p>{feeds}</p></body>"
+                print(style)
 
             response = f"HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nContent-Length: {len(response_data)}\r\n\r\n{response_data}"
         else:
@@ -95,7 +96,6 @@ def main() -> None:
 
 if __name__ == "__main__":
 
-    print("Serving on 127.0.0.1:8080")
     print("Attempting to open in new tab! If there are any problems report them!")
-    webbrowser.open_new_tab("http://127.0.0.1:8080")
     main()
+    webbrowser.open_new_tab("http://127.0.0.1:8080") 
