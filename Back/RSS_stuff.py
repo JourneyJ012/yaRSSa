@@ -4,21 +4,12 @@ import xml.etree.ElementTree as ET
 def parse_url(user_feeds_dir: str, user_choices_dir: str):
     user_choices: list = get_choices(dir=user_choices_dir)
     user_feeds: list = get_feeds(dir=user_feeds_dir)
-    print(user_feeds)
     results = []
     for url in user_feeds:
-            
-        
-        
         feed = requests.get(url=url)
         root = ET.fromstring(str(feed.content.decode()))
-        
-        #with open(f"Back/test.xml", "w") as f: #TODO: MAKE EVERY RSS FEED HAVE AN OUTPUT
-        #    f.write(str(feed.content.decode()))        
-        
+        feed_items = []
         items = root.findall(".//item")
-        
-        
         for item in items:
             current_item = []
             for choice in user_choices:
@@ -28,22 +19,22 @@ def parse_url(user_feeds_dir: str, user_choices_dir: str):
                 else:
                     choice_text = found_element.text
                     current_item.append(choice_text)
-            results.append(current_item)
+            feed_items.append(current_item)
+        results.append(feed_items)
+    with open("Back/results.txt","w") as f:
+        f.write(str(results))
     return results
 
 def get_choices(dir: str):
     with open(dir,"r") as f:
         user_choices = f.readlines()
-        for i in range(0,len(user_choices)):
-            user_choices[i] = str(user_choices[i]).strip()
-    print(user_choices)
+        user_choices = [choice.strip() for choice in user_choices]
     return user_choices 
 
 def get_feeds(dir: str):
     with open(dir,"r") as f:
         user_feeds = f.readlines()
-        for i in range(0,len(user_feeds)):
-            user_feeds[i] = str(user_feeds[i]).strip()
+        user_feeds = [feed.strip() for feed in user_feeds]
     return user_feeds 
 
 if __name__ == "__main__":
