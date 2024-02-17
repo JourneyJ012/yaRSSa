@@ -21,6 +21,8 @@ def parse_url(user_feeds_dir: str, user_choices_dir: str):
                     current_item.append(choice_text)
             feed_items.append(current_item)
         results.append(feed_items)
+    
+    results = "\n".join(["<br>".join([f"<a href='{item[1]}'>{item[0]}</a>" for item in sublist]) for sublist in results])
     with open("Back/results.txt","w") as f:
         f.write(str(results))
     return results
