@@ -99,5 +99,5 @@ def main() -> None:
 if __name__ == "__main__":
 
     print("Attempting to open in new tab! If there are any problems report them!")
+    webbrowser.open_new_tab("http://127.0.0.1:8080") #main is a while loop
     main()
-    webbrowser.open_new_tab("http://127.0.0.1:8080") 
