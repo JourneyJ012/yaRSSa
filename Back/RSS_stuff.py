@@ -21,8 +21,22 @@ def parse_url(user_feeds_dir: str, user_choices_dir: str):
                     current_item.append(choice_text)
             feed_items.append(current_item)
         results.append(feed_items)
-    
-    results = "\n".join(["<br>".join([f"<a href='{item[1]}'>{item[0]}</a>" for item in sublist]) for sublist in results])
+
+    # set up <a> tags
+    if all(choice in user_choices for choice in ["title", "link"]):
+        title_index = user_choices.index("title")
+        link_index = user_choices.index("link")
+
+        results = "\n".join([
+            "<br>".join([
+                f"<a href='{item[link_index]}'>{item[title_index]}</a>" +
+                "".join([f"<br>{item[user_choices.index(choice)]}" for choice in user_choices if choice not in ["title", "link"]])
+                for item in sublist
+            ]) for sublist in results
+        ])
+    else: #Todo: fix IndexError
+            results = "<br>".join("<br>".join(str(item) for item in sublist) for sublist in results)
+
     with open("Back/results.txt","w") as f:
         f.write(str(results))
     return results
