@@ -20,7 +20,7 @@ A simple RSS app in python that doesn't have sponsored content, ads or other cra
 ## Known Problems
 
 - Doesn't work on Brave browser
-- Non-existant elements on ANY item will cause a full (to be focused on first)
+- Non-existant elements on ANY item will cause a full crash (to be focused on first)
 - Python may keep the port used after throwing an error.
 
 
