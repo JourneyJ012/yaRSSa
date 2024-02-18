@@ -8,12 +8,14 @@ A simple RSS app in python that doesn't have sponsored content, ads or other cra
 - Add RSS feeds
 - Get specific items from RSS feeds (image, url, etc)
 
+
 ## Todo (closely ordered to when it comes out)
 
 - fix IndexError (est: feb)
 - make specific errors for every problem (est: march)
 - flaresolverr support (further future)
 - plugins (further future)
+
 
 ## Known Problems
 
@@ -52,4 +54,5 @@ chmod +x start.sh
 
 
 ## Errors
+
 The reporting system is yet to be added. Both `start.bat` and `start.sh` only writes the exception to `error.txt` so far. 
