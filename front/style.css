@@ -10,3 +10,17 @@ h1 {
 p {
     color: #cccccc;
 }
+
+a:visited {
+    color:indigo;
+}
+
+a:hover {
+    color: rgb(59, 53, 114);
+    transition-duration: 1900ms;
+    transition-timing-function: ease-out;
+}
+
+a:active {
+    color: #ff1493;
+}
