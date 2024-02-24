@@ -1,3 +1,13 @@
+from time import localtime
+def handle_error(error) -> None:
+    try:
+        with open("error.txt","a") as f:
+            f.write(f"{localtime()}: {error}")
+    except:
+        print(f"Error {error}, and error.txt not found!")
+        raise FileNotFoundError
+    
+    
 def add_url(dir: str, url: str) -> str:
     with open(dir, 'r') as file:
         lines = [line.strip() for line in file.readlines()]
@@ -20,4 +30,6 @@ def add_url(dir: str, url: str) -> str:
             return f"Already present RSS feed"
         
     except UnboundLocalError:
+        
+        handle_error(f"Unbound Local Error in function add_url({dir},{url})\n(Back/file_management.py)")
         return f"Unbound Local Error in function add_url({dir},{url})\n(Back/file_management.py)"
