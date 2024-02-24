@@ -1,9 +1,8 @@
 import socket
-import webbrowser
 import sys
 import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'back')))
-from file_management import add_url #IMPORT SOMETHING LATER
+from file_management import add_url, handle_error
 from RSS_stuff import parse_url
 
 HOST = "127.0.0.1"
@@ -36,6 +35,7 @@ def handle_request(client_socket) -> None:
             except FileNotFoundError:
                 response_data = "CSS file not found"
                 response = f"HTTP/1.1 404 Not Found"
+                handle_error("File style.css not found")
         else:
             try:
                 with open("Front/index.html", "r") as f:
@@ -44,6 +44,8 @@ def handle_request(client_socket) -> None:
             except FileNotFoundError:
                 response_data = "index.html file not found"
                 response = f"HTTP/1.1 404 Not Found"
+                handle_error("File index.html not found!")
+                
     elif method == "POST":
         body_start = request_data.find("\r\n\r\n") + len("\r\n\r\n")
         form_data = request_data[body_start:]
@@ -65,6 +67,7 @@ def handle_request(client_socket) -> None:
                 user_feeds_dir="Back/user_feeds.txt",
                 user_choices_dir="Back/user_choices.txt"
                 )
+            #TODO: PUT IN A TRY STATEMENT
             with open("Front/style.css","r") as f:
                 style = f.read()
                 response_data = f"<head><style>{style}</style></head><body><h1>Feeds</h1><p>{feeds}</p></body>"
@@ -73,6 +76,7 @@ def handle_request(client_socket) -> None:
             response = f"HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nContent-Length: {len(response_data)}\r\n\r\n{response_data}"
         else:
             response = f"HTTP/1.1 500 Internal Server Error"
+            handle_error(response)
             
     
     client_socket.sendall(response.encode())
@@ -99,5 +103,4 @@ def main() -> None:
 if __name__ == "__main__":
 
     print("Attempting to open in new tab! If there are any problems report them!")
-    webbrowser.open_new_tab("http://127.0.0.1:8080") #main is a while loop
     main()
