@@ -22,20 +22,36 @@ def parse_url(user_feeds_dir: str, user_choices_dir: str):
             feed_items.append(current_item)
         results.append(feed_items)
 
-    # set up <a> tags
-    if all(choice in user_choices for choice in ["title", "link"]):
-        title_index = user_choices.index("title")
-        link_index = user_choices.index("link")
 
-        results = "\n".join([
-            "<br>".join([
-                f"<a href='{item[link_index]}'>{item[title_index]}</a>" +
-                "".join([f"<br>{item[user_choices.index(choice)]}" for choice in user_choices if choice not in ["title", "link"]])
-                for item in sublist
-            ]) for sublist in results
-        ])
-    else: #Todo: fix IndexError
-            results = "<br>".join("<br>".join(str(item) for item in sublist) for sublist in results)
+
+    final_results = []
+    has_title, has_link = False, False
+    if "title" in user_choices:
+        title_index = user_choices.index("title")
+        has_title = True
+    if "link" in user_choices:
+        link_index = user_choices.index("link")
+        has_link = True
+
+
+    for sublist in results:
+        inner_result = []
+        for item in sublist:
+            if has_link and has_title:
+                temp_result = f"<a href='{item[link_index]}'>{item[title_index]}</a>"
+            else:
+                temp_result = ""
+            for choice in user_choices:
+                if ((choice not in ["title", "link"]) or (has_link == True and has_title == False and choice == "link") or (has_link == False and has_title == True and  choice == "title")):
+                
+                    try:
+                        temp_result += f"<br>{item[user_choices.index(choice)]}"
+                    except:
+                        pass
+            inner_result.append(temp_result)
+        final_results.append("<br>".join(inner_result))
+
+    results = "\n".join(final_results)
 
     with open("Back/results.txt","w") as f:
         f.write(str(results))
