@@ -11,7 +11,7 @@ A simple RSS app in python that doesn't have sponsored content, ads or other cra
 
 ## Todo (closely ordered to when it comes out)
 
-- fix IndexError (est: feb)
+- fix the end of the last feed and the start of the first feed from showing up on the same line
 - fix Apostrophe's appearing as `â€™s`
 - make specific errors for every problem (est: march)
 - flaresolverr support (further future)
@@ -21,6 +21,7 @@ A simple RSS app in python that doesn't have sponsored content, ads or other cra
 ## Known Problems
 
 - Apostrophe's appear as `â€™s`
+- the end of the last feed and the start of the first feed from showing up on the same line
 - Doesn't work on Brave browser
 - Non-existant elements on ANY item will cause a full crash (to be focused on first)
 - Python may keep the port used after throwing an error.
