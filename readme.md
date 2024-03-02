@@ -20,6 +20,7 @@ A simple RSS app in python that doesn't have sponsored content, ads or other cra
 
 ## Known Problems
 
+- error.txt doesn't have time written correctly
 - Apostrophe's appear as `â€™s`
 - the end of the last feed and the start of the first feed from showing up on the same line
 - Doesn't work on Brave browser
