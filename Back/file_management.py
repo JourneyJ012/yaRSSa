@@ -4,7 +4,7 @@ def handle_error(error) -> None:
     time.tm_hour
     try:
         with open("error.txt","a") as f:
-            f.write(f"{time.tm_mday}/{time.tm_mon} {time.tm_hour}:{time.tm_min}:{time.tm_sec}: {error}")
+            f.write(f"{time.tm_mday}/{time.tm_mon} {time.tm_hour}:{time.tm_min}:{time.tm_sec}: {error}\n")
     except:
         print(f"Error {error}, and error.txt not found!")
         raise FileNotFoundError
