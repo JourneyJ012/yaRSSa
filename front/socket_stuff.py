@@ -71,7 +71,7 @@ def handle_request(client_socket) -> None:
             with open("Front/style.css","r") as f:
                 style = f.read()
                 response_data = f"<head><style>{style}</style></head><body><h1>Feeds</h1><p>{feeds}</p></body>"
-                print(style)
+                #print(style)
 
             response = f"HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nContent-Length: {len(response_data)}\r\n\r\n{response_data}"
         else:
