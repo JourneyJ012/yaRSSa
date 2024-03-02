@@ -1,8 +1,10 @@
 from time import localtime
 def handle_error(error) -> None:
+    time = localtime()
+    time.tm_hour
     try:
         with open("error.txt","a") as f:
-            f.write(f"{localtime()}: {error}")
+            f.write(f"{time.tm_mday}/{time.tm_mon} {time.tm_hour}:{time.tm_min}:{time.tm_sec}: {error}")
     except:
         print(f"Error {error}, and error.txt not found!")
         raise FileNotFoundError
