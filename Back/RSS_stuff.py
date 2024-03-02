@@ -1,26 +1,35 @@
 import requests
 import xml.etree.ElementTree as ET
+from file_management import handle_error
 
 def parse_url(user_feeds_dir: str, user_choices_dir: str):
     user_choices: list = get_choices(dir=user_choices_dir)
     user_feeds: list = get_feeds(dir=user_feeds_dir)
     results = []
-    for url in user_feeds:
-        feed = requests.get(url=url)
-        root = ET.fromstring(str(feed.content.decode()))
-        feed_items = []
-        items = root.findall(".//item")
-        for item in items:
-            current_item = []
-            for choice in user_choices:
-                found_element = item.find(choice)
-                if found_element is None:
-                    print(f"Could not find {choice} in {item}")
-                else:
-                    choice_text = found_element.text
-                    current_item.append(choice_text)
-            feed_items.append(current_item)
-        results.append(feed_items)
+    for url in user_feeds: #TODO: Async for speed
+        try:
+            feed = requests.get(url=url)
+        except requests.exceptions.MissingSchema:
+            print(f"url {url} is not in the correct format")
+            handle_error(f"URL {url} is not in the correct format!")
+        try:
+
+            root = ET.fromstring(str(feed.content.decode()))
+            feed_items = []
+            items = root.findall(".//item")
+            for item in items:
+                current_item = []
+                for choice in user_choices:
+                    found_element = item.find(choice)
+                    if found_element is None:
+                        print(f"Could not find {choice} in {item}")
+                    else:
+                        choice_text = found_element.text
+                        current_item.append(choice_text)
+                feed_items.append(current_item)
+            results.append(feed_items)
+        except:
+            results.append(str(f"URL {url} failed!"))
 
 
 
@@ -38,7 +47,11 @@ def parse_url(user_feeds_dir: str, user_choices_dir: str):
         inner_result = []
         for item in sublist:
             if has_link and has_title:
-                temp_result = f"<a href='{item[link_index]}'>{item[title_index]}</a>"
+                try:
+                    temp_result = f"<a href='{item[link_index]}'>{item[title_index]}</a>"
+                except IndexError:
+                    temp_result = "URL broken!"
+                    handle_error("""Broken URL caused broken response "URL broken!" This is due to an IndexError in Back/RSS_stuff.py. Please check your feeds in user_feeds.txt for any broken feeds.""")
             else:
                 temp_result = ""
             for choice in user_choices:
