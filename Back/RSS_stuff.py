@@ -64,10 +64,10 @@ async def parse_url(user_feeds_dir: str, user_choices_dir: str):
                     except:
                         pass
             inner_result.append(temp_result)
+            inner_result.append("<br>")
         final_results.append("<br>".join(inner_result))
 
     results = "\n".join(final_results)
-
     with open("Back/results.txt","w") as f:
         f.write(str(results))
     return results
