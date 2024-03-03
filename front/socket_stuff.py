@@ -1,6 +1,7 @@
 import socket
 import sys
 import os
+import asyncio
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'back')))
 from file_management import add_url, handle_error
 from RSS_stuff import parse_url
@@ -8,7 +9,7 @@ from RSS_stuff import parse_url
 HOST = "127.0.0.1"
 PORT = 8080
 
-def handle_request(client_socket) -> None:
+async def handle_request(client_socket) -> None:
     request_data = client_socket.recv(1024).decode()
     #print("Received request data:", repr(request_data))
     try: #if request_lines but less error prone
@@ -62,11 +63,10 @@ def handle_request(client_socket) -> None:
             response = f"HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nContent-Length: {len(response_data)}\r\n\r\n{response_data}"
 
         elif "get_RSS" in request_data: 
-            
-            feeds = parse_url(
+            feeds = await parse_url(
                 user_feeds_dir="Back/user_feeds.txt",
                 user_choices_dir="Back/user_choices.txt"
-                )
+            )
             #TODO: PUT IN A TRY STATEMENT
             with open("Front/style.css","r") as f:
                 style = f.read()
@@ -89,18 +89,17 @@ def format_data(form_input: str) -> str:
     #print(f"After: {form_input}")
     return form_input
 
-def main() -> None:
+async def main() -> None:
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as server_socket:
         server_socket.bind((HOST, PORT))
         server_socket.listen(5)
         print(f"Server listening on {HOST}:{PORT}")
 
+        loop = asyncio.get_event_loop()
         while True:
-            client_socket, addr = server_socket.accept() #SAYS ADDR IS NOT ACCESSED, DOESN'T WORK WITHOUT
-            handle_request(client_socket)
-    
+            client_socket, addr = server_socket.accept() 
+            await handle_request(client_socket)
 
 if __name__ == "__main__":
-
     print("Attempting to open in new tab! If there are any problems report them!")
-    main()
+    asyncio.run(main())
