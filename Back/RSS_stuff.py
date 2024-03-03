@@ -1,45 +1,41 @@
-import requests
 import xml.etree.ElementTree as ET
-from file_management import handle_error
-import asyncio
 import aiohttp
+import asyncio
+from file_management import handle_error
 
-
-async def fetch_feed(url):
-    async with aiohttp.ClientSession() as session:
-        try:
-            async with session.get(url) as response:
-                return await response.text()
-        except aiohttp.client_exceptions.InvalidURL:
-            print(f"Invalid URL {url}")
-            handle_error(f"Invalid URL {url}")
+async def fetch_feed(session, url):
+    try:
+        async with session.get(url) as response:
+            return await response.text()
+    except aiohttp.client_exceptions.InvalidURL:
+        print(f"Invalid URL {url}")
+        handle_error(f"Invalid URL {url}")
 
 async def parse_url(user_feeds_dir: str, user_choices_dir: str):
-    user_choices: list = get_choices(dir=user_choices_dir)
-    user_feeds: list = get_feeds(dir=user_feeds_dir)
+    user_choices = get_choices(user_choices_dir)
+    user_feeds = get_feeds(user_feeds_dir)
     results = []
 
-    tasks = [fetch_feed(url) for url in user_feeds]
-    responses = await asyncio.gather(*tasks)
-
-    for feed_content in responses:
-        try:
-            root = ET.fromstring(feed_content)
-            feed_items = []
-            items = root.findall(".//item")
-            for item in items:
-                current_item = []
-                for choice in user_choices:
-                    found_element = item.find(choice)
-                    if found_element is None:
-                        print(f"Could not find {choice} in {item}")
-                    else:
-                        choice_text = found_element.text
-                        current_item.append(choice_text)
-                feed_items.append(current_item)
-            results.append(feed_items)
-        except Exception as e:
-            results.append(str(f"Error: {e}"))
+    async with aiohttp.ClientSession() as session:
+        for url in user_feeds:
+            feed_content = await fetch_feed(session, url)
+            try:
+                root = ET.fromstring(feed_content)
+                feed_items = []
+                items = root.findall(".//item")
+                for item in items:
+                    current_item = []
+                    for choice in user_choices:
+                        found_element = item.find(choice)
+                        if found_element is None:
+                            print(f"Could not find {choice} in {item}")
+                        else:
+                            choice_text = found_element.text
+                            current_item.append(choice_text)
+                    feed_items.append(current_item)
+                results.append(feed_items)
+            except Exception as e:
+                results.append(str(f"Error: {e}"))
 
     final_results = []
     has_title, has_link = False, False
@@ -89,6 +85,7 @@ def get_feeds(dir: str):
     return user_feeds 
 
 if __name__ == "__main__":
-    parse_url(
+    asyncio.run(parse_url(
         user_feeds_dir="Back/user_feeds.txt",
-        user_choices_dir="Back/user_choices.txt")
+        user_choices_dir="Back/user_choices.txt"
+    ))
