@@ -1,20 +1,30 @@
 import requests
 import xml.etree.ElementTree as ET
 from file_management import handle_error
+import asyncio
+import aiohttp
 
-def parse_url(user_feeds_dir: str, user_choices_dir: str):
+
+async def fetch_feed(url):
+    async with aiohttp.ClientSession() as session:
+        try:
+            async with session.get(url) as response:
+                return await response.text()
+        except aiohttp.client_exceptions.InvalidURL:
+            print(f"Invalid URL {url}")
+            handle_error(f"Invalid URL {url}")
+
+async def parse_url(user_feeds_dir: str, user_choices_dir: str):
     user_choices: list = get_choices(dir=user_choices_dir)
     user_feeds: list = get_feeds(dir=user_feeds_dir)
     results = []
-    for url in user_feeds: #TODO: Async for speed
-        try:
-            feed = requests.get(url=url)
-        except requests.exceptions.MissingSchema:
-            print(f"url {url} is not in the correct format")
-            handle_error(f"URL {url} is not in the correct format!")
-        try:
 
-            root = ET.fromstring(str(feed.content.decode()))
+    tasks = [fetch_feed(url) for url in user_feeds]
+    responses = await asyncio.gather(*tasks)
+
+    for feed_content in responses:
+        try:
+            root = ET.fromstring(feed_content)
             feed_items = []
             items = root.findall(".//item")
             for item in items:
@@ -28,10 +38,8 @@ def parse_url(user_feeds_dir: str, user_choices_dir: str):
                         current_item.append(choice_text)
                 feed_items.append(current_item)
             results.append(feed_items)
-        except:
-            results.append(str(f"URL {url} failed!"))
-
-
+        except Exception as e:
+            results.append(str(f"Error: {e}"))
 
     final_results = []
     has_title, has_link = False, False
@@ -41,7 +49,6 @@ def parse_url(user_feeds_dir: str, user_choices_dir: str):
     if "link" in user_choices:
         link_index = user_choices.index("link")
         has_link = True
-
 
     for sublist in results:
         inner_result = []
@@ -56,7 +63,6 @@ def parse_url(user_feeds_dir: str, user_choices_dir: str):
                 temp_result = ""
             for choice in user_choices:
                 if ((choice not in ["title", "link"]) or (has_link == True and has_title == False and choice == "link") or (has_link == False and has_title == True and  choice == "title")):
-                
                     try:
                         temp_result += f"<br>{item[user_choices.index(choice)]}"
                     except:
