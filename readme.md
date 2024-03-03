@@ -11,6 +11,8 @@ A simple RSS app in python that doesn't have sponsored content, ads or other cra
 
 ## Todo (closely ordered to when it comes out)
 
+- allow removal of feeds from the site
+- mark items as read
 - fix the end of the last feed and the start of the first feed from showing up on the same line
 - fix Apostrophe's appearing as `â€™s`
 - make specific errors for every problem (est: march)
