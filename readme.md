@@ -34,6 +34,8 @@ A simple RSS app in python that doesn't have sponsored content, ads or other cra
 
 1. Have python installed 
 
+### Untested, but most likely python 3.6+, due to use of dictionaries.
+
 https://python.org
 
 2. Clone the repo
