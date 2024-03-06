@@ -54,7 +54,7 @@ async def handle_request(client_socket) -> None:
         # Check which button was clicked
         if "new_RSS" in request_data:
             form_data = format_data(form_input=form_data)
-            added = add_url(dir="Back/user_feeds.txt", url=form_data)
+            added = add_url(dir="Back/user_feeds.csv", url=form_data)
 
             if added == "Already present RSS feed" or added == "Successfully added RSS feed":
                 response_data = f"<h1>Form received:</h1><p>Feed {form_data} added!</p>"
@@ -64,7 +64,7 @@ async def handle_request(client_socket) -> None:
 
         elif "get_RSS" in request_data: 
             feeds = await parse_url(
-                user_feeds_dir="Back/user_feeds.txt",
+                user_feeds_dir="Back/user_feeds.csv",
                 user_choices_dir="Back/user_choices.txt"
             )
             #TODO: PUT IN A TRY STATEMENT
@@ -88,7 +88,6 @@ def format_data(form_input: str) -> str:
     form_input = form_input[1].strip().replace("%3A", ":").replace("%2F", "/").replace("%2f", "/") #Todo: fix this behaviour
     #print(f"After: {form_input}")
     return form_input
-
 async def main() -> None:
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as server_socket:
         server_socket.bind((HOST, PORT))
