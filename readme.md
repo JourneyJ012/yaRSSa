@@ -5,13 +5,15 @@ A simple RSS app in python that doesn't have sponsored content, ads or other cra
 
 ## Features
 
-- Add RSS feeds
+- Add RSS feeds (not rn currently, major importance)
 - Get specific items from RSS feeds (image, url, etc)
+- allow removal of feeds from the site
 
 
 ## Todo (closely ordered to when it comes out)
 
-- allow removal of feeds from the site
+- fix get RSS feeds not working
+- restructure the code for `front/socket_stuff.py`'s `format_data` function.
 - mark items as read
 - fix the end of the last feed and the start of the first feed from showing up on the same line
 - fix Apostrophe's appearing as `â€™s`
@@ -28,7 +30,7 @@ A simple RSS app in python that doesn't have sponsored content, ads or other cra
 - Doesn't work on Brave browser
 - Non-existant elements on ANY item will cause a full crash (to be focused on first)
 - Python may keep the port used after throwing an error.
-
+- Any URL with `"&RSS_url="` will not work due to how the code is made. If you wish to try fix this, look into `front/socket_stuff.py`'s `format_data` function. 
 
 ## Installation
 
