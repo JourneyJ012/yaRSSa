@@ -24,3 +24,7 @@ a:hover {
 a:active {
     color: #873456;
 }
+
+label {
+    color:#cccccc
+}
