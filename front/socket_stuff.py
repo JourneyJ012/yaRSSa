@@ -3,7 +3,7 @@ import sys
 import os
 import asyncio
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'back')))
-from file_management import add_url, handle_error
+from file_management import *
 from RSS_stuff import parse_url
 
 HOST = "127.0.0.1"
@@ -52,42 +52,78 @@ async def handle_request(client_socket) -> None:
         form_data = request_data[body_start:]
 
         # Check which button was clicked
-        if "new_RSS" in request_data:
-            form_data = format_data(form_input=form_data)
+        if "RSS_name" in request_data and "RSS_url" in request_data:
+
+            print("new_RSS triggered!")
+
+            form_data = format_data(form_input=form_data, url=True)
             added = add_url(dir="Back/user_feeds.csv", url=form_data)
 
-            if added == "Already present RSS feed" or added == "Successfully added RSS feed":
+            if added == "Successfully added RSS feed":
                 response_data = f"<h1>Form received:</h1><p>Feed {form_data} added!</p>"
+            elif  added == "Already present RSS feed":
+                response_data = f"<h1>Form received:</h1><p>Feed {form_data} was already there!"
             else:
                 response_data = f"<h1>Fail!</h1><p>{added}</p>"
             response = f"HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nContent-Length: {len(response_data)}\r\n\r\n{response_data}"
 
-        elif "get_RSS" in request_data: 
+        elif "get_RSS" in request_data: #TODO: figure out why it takes each item in the list for finding elements
+
+            print("get_RSS triggered!")
+
             feeds = await parse_url(
                 user_feeds_dir="Back/user_feeds.csv",
                 user_choices_dir="Back/user_choices.txt"
             )
-            #TODO: PUT IN A TRY STATEMENT
             with open("Front/style.css","r") as f:
                 style = f.read()
                 response_data = f"<head><style>{style}</style></head><body><h1>Feeds</h1><p>{feeds}</p></body>"
                 #print(style)
 
             response = f"HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nContent-Length: {len(response_data)}\r\n\r\n{response_data}"
+
+
+        elif "remove_feed" in request_data:
+                #remove_feed(feed_url) #TODO: add to file_management
+                print("remove_feed triggered!")
+                form_data = format_data(form_input=form_data, url=False)
+                remove_feed(
+                    form_data,
+                    "Back/user_feeds.csv")
+                
+                with open("Front/style.css","r") as f:
+                    style = f.read()
+                    response_data = f"<head><style>{style}</style></head><body><h1>Feeds</h1><p>{form_data}</p></body>"
+                    #print(style)
+                response = f"HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nContent-Length: {len(response_data)}\r\n\r\n{response_data}"
+
         else:
             response = f"HTTP/1.1 500 Internal Server Error"
             handle_error(response)
-            
     
     client_socket.sendall(response.encode())
     #print(response.encode())
     client_socket.close()
 
-def format_data(form_input: str) -> str:
+def format_data(form_input: str, url: bool) -> str: #sigh. form_input is a list for the case of coming from adding an RSS feed. Don't ask how, but it works.
+
     form_input = form_input.split("=", 1)  # Splits from the first '=', outputting https%3A%2F%2Ffeeds.megaphone.fm%2Fnewheights
-    form_input = form_input[1].strip().replace("%3A", ":").replace("%2F", "/").replace("%2f", "/") #Todo: fix this behaviour
+    form_input = form_input[1].strip().replace("%3A", ":").replace("%2F", "/").replace("%2f", "/").replace("%2C"," ")
+
+    #TODO: REMAKE THIS WHOLE THING, IT WORKS MAGICALLY BUT SUCKS AND IS A MASSIVE EYESORE.
+
+    if not url: #used for remove_feed
+        form_input = form_input.replace("+"," ")
+    elif "&RSS_url=" in form_input:
+        form_input: list = form_input.split("&RSS_url=")
+    print("HERE HERE LOOK HERE", form_input, type(form_input))
+    
+    if type(form_input == list):
+        form_input[0] = form_input[0].replace("+", " ")
+
     #print(f"After: {form_input}")
     return form_input
+
 async def main() -> None:
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as server_socket:
         server_socket.bind((HOST, PORT))
