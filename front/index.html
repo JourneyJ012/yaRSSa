@@ -10,11 +10,28 @@
 <body>
     <h1>ADD A FEED</h1>
     <form action="" method="post">
-        <input type="text" name="new_RSS" id="" required>
+        <label for="RSS_name">Name of the feed: </label>
+        <br>
+        <input type="text" name="RSS_name" value="" required>
+        <br>
+        <label for="RSS_url">URL of the feed: </label>
+        <br>
+        <input type="text" name="RSS_url" value="" required>
+        <br>
         <input type="submit" name="" value="Submit">
     </form>
+    <br>
+    <br>
     <form action="" method="post">
         <input type="submit" name="get_RSS" value="Get RSS feeds!">
+    </form>
+    <br>
+    <br>
+    <form action="" method="post">
+        <label for="remove_feed">Name of the feed to remove: </label>
+        <br>
+        <input type="text" name="remove_feed" value="">
+        <input type="submit" name="" value="Submit">
     </form>
 </form>
 </body>
