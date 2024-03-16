@@ -12,12 +12,11 @@ A simple RSS app in python that doesn't have sponsored content, ads or other cra
 
 ## Todo (closely ordered to when it comes out)
 
-- fix get RSS feeds not working
 - restructure the code for `front/socket_stuff.py`'s `format_data` function.
 - mark items as read
-- fix the end of the last feed and the start of the first feed from showing up on the same line
+- fix the end of the last feed and the start of the first feed from showing up with 1 less `<br>`
 - fix Apostrophe's appearing as `â€™s`
-- make specific errors for every problem (est: march)
+- make specific errors for every problem
 - flaresolverr support (further future)
 - plugins (further future)
 
@@ -26,10 +25,11 @@ A simple RSS app in python that doesn't have sponsored content, ads or other cra
 
 - error.txt has no leading 0's for date
 - Apostrophe's appear as `â€™s`
-- the end of the last feed and the start of the first feed from showing up on the same line
+- the end of the last feed and the start of the first feed from showing up closer
 - Doesn't work on Brave browser
 - Non-existant elements on ANY item will cause a full crash (to be focused on first)
-- Python may keep the port used after throwing an error.
+- Python may keep the port used after throwing an error. 
+This error hasn't occurred in recent testing, but that doesn't mean it's fully gone.
 - Any URL with `"&RSS_url="` will not work due to how the code is made. If you wish to try fix this, look into `front/socket_stuff.py`'s `format_data` function. 
 
 ## Installation
