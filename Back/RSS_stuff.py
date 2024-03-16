@@ -40,7 +40,7 @@ async def parse_url(session, user_feeds_dir: str, user_choices_dir: str):
         try:
             root = ET.fromstring(feed_content)
             feed_items = []
-            items = root.findall(".//entry") + root.findall(".//item")
+            items = root.findall(".//item")
             print(items)
             for item in items:
                 current_item = []
