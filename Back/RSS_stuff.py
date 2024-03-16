@@ -117,9 +117,3 @@ def get_feeds(dir: str) -> dict:
         except ValueError:
             handle_error("There's a problem in your Back/user_feeds.csv, where you have either forgotten the title, URL, or comma. Please check your error.")
     return user_feeds 
-
-if __name__ == "__main__":
-    asyncio.run(parse_url(
-        user_feeds_dir="Back/user_feeds.csv",
-        user_choices_dir="Back/user_choices.txt"
-    ))
