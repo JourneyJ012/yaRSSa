@@ -89,8 +89,8 @@ async def parse_url(session, user_feeds_dir: str, user_choices_dir: str):
         final_results.append("<br>".join(inner_result))
 
     results = "\n".join(final_results)
-    with open("Back/results.txt","w") as f:
-        f.write(str(results))
+#   with open("Back/results.txt","w") as f:
+#       f.write(str(results))
     return results
 
 def get_choices(dir: str):
