@@ -36,22 +36,23 @@ async def parse_url(session, user_feeds_dir: str, user_choices_dir: str):
     user_feeds = get_feeds(user_feeds_dir)
     user_feeds = await fetch_all_feeds(session, user_feeds=user_feeds) #returns a list of feeds.
     results = []
-    print(user_feeds)
     for feed_content in user_feeds:
         try:
             root = ET.fromstring(feed_content)
             feed_items = []
-            items = root.findall(".//item")
+            items = root.findall(".//entry") + root.findall(".//item")
+            print(items)
             for item in items:
                 current_item = []
                 for choice in user_choices:
                     found_element = item.find(choice)
-                    print(f"choice {choice}, found_element {found_element}\n")
-                    if found_element is None:
-                        print(f"Could not find {choice} in {item}")
-                    else:
+                    if found_element is not None:
                         choice_text = found_element.text
-                        current_item.append(choice_text)
+                        current_item.append(choice_text)                     
+                    else:
+                        #print(f"Could not find {choice} in {item}")
+                        pass
+
                 feed_items.append(current_item)
             results.append(feed_items)
         except Exception as e:
@@ -107,11 +108,14 @@ def get_feeds(dir: str) -> dict:
         
         user_feeds: dict = {}
         
-        for feed_info in list_user_feeds:
-            name, url = feed_info.split(",")
-            user_feeds[name.strip()] = url.strip()
-            #Dict {"BBC UK":"http://feeds.bbci.co.uk/news/uk/rss.xml", 
-            #"Sky News UK":"http://feeds.skynews.com/feeds/rss/uk.xml"}
+        try:
+            for feed_info in list_user_feeds:
+                name, url = feed_info.split(",")
+                user_feeds[name.strip()] = url.strip()
+                #Dict {"BBC UK":"http://feeds.bbci.co.uk/news/uk/rss.xml", 
+                #"Sky News UK":"http://feeds.skynews.com/feeds/rss/uk.xml"}
+        except ValueError:
+            handle_error("There's a problem in your Back/user_feeds.csv, where you have either forgotten the title, URL, or comma. Please check your error.")
     return user_feeds 
 
 if __name__ == "__main__":
