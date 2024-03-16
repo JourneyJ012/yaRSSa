@@ -2,14 +2,18 @@ import socket
 import sys
 import os
 import asyncio
+import aiohttp
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'back')))
-from file_management import *
+from file_management import handle_error, add_url, remove_feed 
 from RSS_stuff import parse_url
+#These are imported after the sys.path.append(...) line due to the fact that they are in the ../Back/ folder. 
+#If anyone knows of a better solution, please change this.
+#However, I would expect errors due to the fact that this has changed the path.
 
 HOST = "127.0.0.1"
 PORT = 8080
 
-async def handle_request(client_socket) -> None:
+async def handle_request(client_socket, session) -> None:
     request_data = client_socket.recv(1024).decode()
     #print("Received request data:", repr(request_data))
     try: #if request_lines but less error prone
@@ -45,7 +49,7 @@ async def handle_request(client_socket) -> None:
             except FileNotFoundError:
                 response_data = "index.html file not found"
                 response = f"HTTP/1.1 404 Not Found"
-                handle_error("File index.html not found!")
+                handle_error("File Front/index.html not found!")
                 
     elif method == "POST":
         body_start = request_data.find("\r\n\r\n") + len("\r\n\r\n")
@@ -72,6 +76,7 @@ async def handle_request(client_socket) -> None:
             print("get_RSS triggered!")
 
             feeds = await parse_url(
+                session=session,
                 user_feeds_dir="Back/user_feeds.csv",
                 user_choices_dir="Back/user_choices.txt"
             )
@@ -105,7 +110,7 @@ async def handle_request(client_socket) -> None:
     #print(response.encode())
     client_socket.close()
 
-def format_data(form_input: str, url: bool) -> str: #sigh. form_input is a list for the case of coming from adding an RSS feed. Don't ask how, but it works.
+def format_data(form_input: str, url: bool) -> str: #sigh. form_input is a list when adding an RSS feed. Don't ask how, but it works. May god have luck on anyone trying to fix that part.
 
     form_input = form_input.split("=", 1)  # Splits from the first '=', outputting https%3A%2F%2Ffeeds.megaphone.fm%2Fnewheights
     form_input = form_input[1].strip().replace("%3A", ":").replace("%2F", "/").replace("%2f", "/").replace("%2C"," ")
@@ -125,15 +130,16 @@ def format_data(form_input: str, url: bool) -> str: #sigh. form_input is a list 
     return form_input
 
 async def main() -> None:
-    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as server_socket:
-        server_socket.bind((HOST, PORT))
-        server_socket.listen(5)
-        print(f"Server listening on {HOST}:{PORT}")
+    async with aiohttp.ClientSession() as session:
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as server_socket:
+            server_socket.bind((HOST, PORT))
+            server_socket.listen(5)
+            print(f"Server listening on {HOST}:{PORT}")
 
-        loop = asyncio.get_event_loop()
-        while True:
-            client_socket, addr = server_socket.accept() 
-            await handle_request(client_socket)
+            loop = asyncio.get_event_loop()
+            while True:
+                client_socket, addr = server_socket.accept() 
+                await handle_request(client_socket, session=session)
 
 if __name__ == "__main__":
     print("Attempting to open in new tab! If there are any problems report them!")
