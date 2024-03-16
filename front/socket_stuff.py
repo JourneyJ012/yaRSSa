@@ -75,7 +75,7 @@ async def handle_request(client_socket, session) -> None:
                 response_data = f"<h1>Fail!</h1><p>{added}</p>"
             response = f"HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nContent-Length: {len(response_data)}\r\n\r\n{response_data}"
 
-        elif "get_RSS" in request_data: #TODO: figure out why it takes each item in the list for finding elements
+        elif "get_RSS" in request_data:
 
             print("get_RSS triggered!")
 
@@ -93,7 +93,6 @@ async def handle_request(client_socket, session) -> None:
 
 
         elif "remove_feed" in request_data:
-                #remove_feed(feed_url) #TODO: add to file_management
                 print("remove_feed triggered!")
                 form_data = format_data(form_input=form_data, url=False)
                 remove_feed(
