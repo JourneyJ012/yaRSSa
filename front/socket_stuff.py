@@ -149,4 +149,4 @@ async def main() -> None:
 
 if __name__ == "__main__":
     print("Attempting to open in new tab! If there are any problems report them!")
-    asyncio.run(main())
+    asyncio.run(main()) 
