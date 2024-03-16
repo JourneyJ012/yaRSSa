@@ -6,14 +6,26 @@ from file_management import handle_error
 async def fetch_feed(session, feed_name, url):
     try:
         async with session.get(url) as response:
-            return await response.text()
+            response_text = await response.text()
+            return response_text
+        
     except aiohttp.client_exceptions.InvalidURL:
         print(f"Invalid URL {url}")
         handle_error(f"Invalid URL {url}")
     except aiohttp.client_exceptions.ClientConnectorError:
         print(f"URL {url} could not connect. This error has not been logged.")
 
-async def parse_url(user_feeds_dir: str, user_choices_dir: str): 
+async def fetch_all_feeds(session, user_feeds):
+    tasks = []
+    for feed_name, url in user_feeds.items():
+        tasks.append(fetch_feed(session, feed_name, url))
+    try:
+        return await asyncio.gather(*tasks)
+    except aiohttp.ClientError as e:
+        print(f"Error fetching feeds: {e}")
+        return []
+
+async def parse_url(session, user_feeds_dir: str, user_choices_dir: str): 
 #TODO: split the getting of URLs into:
     #Get URLs from a CSV file, as to allow titles of the feeds
     #Make results a dictionary with the title and then the feed
@@ -22,29 +34,28 @@ async def parse_url(user_feeds_dir: str, user_choices_dir: str):
 
     user_choices = get_choices(user_choices_dir)
     user_feeds = get_feeds(user_feeds_dir)
-    print(user_feeds)
+    user_feeds = await fetch_all_feeds(session, user_feeds=user_feeds) #returns a list of feeds.
     results = []
-
-    async with aiohttp.ClientSession() as session:
-        for feed_name, url in user_feeds.items():
-            feed_content = await fetch_feed(session, feed_name, url)
-            try:
-                root = ET.fromstring(feed_content)
-                feed_items = []
-                items = root.findall(".//item")
-                for item in items:
-                    current_item = []
-                    for choice in user_choices:
-                        found_element = item.find(choice)
-                        if found_element is None:
-                            print(f"Could not find {choice} in {item}")
-                        else:
-                            choice_text = found_element.text
-                            current_item.append(choice_text)
-                    feed_items.append(current_item)
-                results.append(feed_items)
-            except Exception as e:
-                results.append(str(f"Error: {e}"))
+    print(user_feeds)
+    for feed_content in user_feeds:
+        try:
+            root = ET.fromstring(feed_content)
+            feed_items = []
+            items = root.findall(".//item")
+            for item in items:
+                current_item = []
+                for choice in user_choices:
+                    found_element = item.find(choice)
+                    print(f"choice {choice}, found_element {found_element}\n")
+                    if found_element is None:
+                        print(f"Could not find {choice} in {item}")
+                    else:
+                        choice_text = found_element.text
+                        current_item.append(choice_text)
+                feed_items.append(current_item)
+            results.append(feed_items)
+        except Exception as e:
+            results.append(str(f"Error: {e}"))
 
     final_results = []
     has_title, has_link = False, False
@@ -101,8 +112,6 @@ def get_feeds(dir: str) -> dict:
             user_feeds[name.strip()] = url.strip()
             #Dict {"BBC UK":"http://feeds.bbci.co.uk/news/uk/rss.xml", 
             #"Sky News UK":"http://feeds.skynews.com/feeds/rss/uk.xml"}
-
-
     return user_feeds 
 
 if __name__ == "__main__":
