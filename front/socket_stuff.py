@@ -10,8 +10,12 @@ from RSS_stuff import parse_url
 #If anyone knows of a better solution, please change this.
 #However, I would expect errors due to the fact that this has changed the path.
 
-HOST = "127.0.0.1"
-PORT = 8080
+def get_server_info(directory):
+    with open (directory,"r") as f:
+        return f.readlines()
+    
+
+
 
 async def handle_request(client_socket, session) -> None:
     request_data = client_socket.recv(1024).decode()
@@ -130,6 +134,8 @@ def format_data(form_input: str, url: bool) -> str: #sigh. form_input is a list 
     return form_input
 
 async def main() -> None:
+    HOST = get_server_info("Back/server_info.txt")[0].strip()
+    PORT = int(get_server_info("Back/server_info.txt")[1])
     async with aiohttp.ClientSession() as session:
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as server_socket:
             server_socket.bind((HOST, PORT))
