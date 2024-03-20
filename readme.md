@@ -12,6 +12,7 @@ A simple RSS app in python that doesn't have sponsored content, ads or other cra
 
 ## Todo (closely ordered to when it comes out)
 
+- remove the ability to add duplicates
 - restructure the code for `front/socket_stuff.py`'s `format_data` function.
 - mark items as read
 - fix the end of the last feed and the start of the first feed from showing up with 1 less `<br>`
