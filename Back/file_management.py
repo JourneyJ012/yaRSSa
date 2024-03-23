@@ -38,9 +38,9 @@ def add_url(dir: str, url: str) -> str:
         handle_error(f"Unbound Local Error in function add_url({dir},{url})\n(Back/file_management.py)")
         return f"Unbound Local Error in function add_url({dir},{url})\n(Back/file_management.py)"
     
-def remove_feed(name, feeds_dir):
+def remove_feed(name: str, feeds_dir: str):
     try:
-        with open(feeds_dir, "r") as f:
+        with open(feeds_dir, "r", newline='') as f:
             reader = csv.reader(f)
             rows = list(reader)
         
@@ -48,19 +48,22 @@ def remove_feed(name, feeds_dir):
         for i, row in enumerate(rows):
             if row and row[0] == name:
                 index_to_remove = i
-                break  # Once found, exit loop
+                row_found = True
+                break
         
         if index_to_remove is not None:
             del rows[index_to_remove]
-        
-        # Filter out empty rows
-        rows = [row for row in rows if row]
-        
-        with open("Back/user_feeds.csv", 'w', newline='') as f:  # Add newline='' to prevent extra line breaks
-            writer = csv.writer(f)
-            writer.writerows(rows)
+            with open(feeds_dir, 'w', newline='') as f:
+                writer = csv.writer(f)
+                writer.writerows(rows)
 
     except FileNotFoundError:
-        handle_error("FileNotFoundError in Back/remove_url")
-        print(f"FileNotFoundError, check error.txt for more details!")
-    print(name)
+        print("File not found:", feeds_dir)
+    except Exception as e:
+        print("An error occurred:", str(e))
+    
+    
+    if ('row_found' in locals()):
+        return f'{name} removed!'
+    elif ('row_found' not in locals()):
+        return f'{name} not found, file not overwritten!'
