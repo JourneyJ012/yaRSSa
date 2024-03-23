@@ -124,9 +124,8 @@ def format_data(form_input: str, url: bool) -> str: #sigh. form_input is a list 
         form_input = form_input.replace("+"," ")
     elif "&RSS_url=" in form_input:
         form_input: list = form_input.split("&RSS_url=")
-    print("HERE HERE LOOK HERE", form_input, type(form_input))
     
-    if type(form_input == list):
+    if type(form_input) == list:
         form_input[0] = form_input[0].replace("+", " ")
 
     #print(f"After: {form_input}")
