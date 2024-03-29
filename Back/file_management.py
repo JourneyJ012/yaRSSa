@@ -16,6 +16,13 @@ def add_url(dir: str, url: str) -> str:
         lines = [line.strip() for line in file.readlines()]
         print(lines)
         name, url, = url
+
+        new_name, new_url = name.lower(), url.lower()
+        for line in lines:
+            split_line = line.lower().split(",")
+            if (new_name == split_line[0] or new_url == split_line[1]):
+                return f"feed {name} ({url}) is already in feeds!"
+
     try:
 
         if url not in lines:
