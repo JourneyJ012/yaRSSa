@@ -2,5 +2,5 @@
 .vscode/
 #Cache
 Back/__pycache__
-#My personal choices (yes I'm daily driving the dev version.)
+#User options
 Back/user_feeds.csv
