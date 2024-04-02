@@ -5,7 +5,7 @@ A simple RSS app in python that doesn't have sponsored content, ads or other cra
 
 ## Features
 
-- Add RSS feeds (not rn currently, major importance)
+- Add RSS feeds
 - Get specific items from RSS feeds (image, url, etc)
 - allow removal of feeds from the site
 
@@ -42,12 +42,13 @@ This error hasn't occurred in recent testing, but that doesn't mean it's fully g
 https://python.org
 
 2. Clone the repo
-
 `git clone https://github.com/JourneyJ012/yaRSSa`
 
-3. Navigate in
-
+3. Navigate into the project
 `cd yaRSSa`
+
+4. Install requirements
+`pip install -r requirements.txt`
 
 
 ## Usage
