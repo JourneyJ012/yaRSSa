@@ -8,11 +8,11 @@ A simple RSS app in python that doesn't have sponsored content, ads or other cra
 - Add RSS feeds
 - Get specific items from RSS feeds (image, url, etc)
 - allow removal of feeds from the site
+- duplication check whilst adding
 
 
 ## Todo (closely ordered to when it comes out)
 
-- remove the ability to add duplicates
 - make remove feed always compare lower case.
 - restructure the code for `front/socket_stuff.py`'s `format_data` function.
 - mark items as read
