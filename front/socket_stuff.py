@@ -64,8 +64,8 @@ async def handle_request(client_socket, session) -> None:
 
             print("new_RSS triggered!")
 
-            form_data = format_data(form_input=form_data, url=True)
-            added = add_url(dir="Back/user_feeds.csv", url=form_data)
+            form_data = format_url(url=form_data)
+            added = add_url(dir="Back/user_feeds.csv", name_url=form_data)
 
             if added == "Successfully added RSS feed":
                 response_data = f"<h1>Form received:</h1><p>Feed {form_data} added!</p>"
@@ -94,14 +94,15 @@ async def handle_request(client_socket, session) -> None:
 
         elif "remove_feed" in request_data:
                 print("remove_feed triggered!")
-                form_data = format_data(form_input=form_data, url=False)
-                remove_feed(
+                form_data = form_data.split("=")[1] #splits form_data into ["remove_feed","name+any+spaces"]
+                form_data = form_data.replace("+"," ")
+                removal_status = remove_feed(
                     form_data,
                     "Back/user_feeds.csv")
                 
                 with open("Front/style.css","r") as f:
                     style = f.read()
-                    response_data = f"<head><style>{style}</style></head><body><h1>Feeds</h1><p>{form_data}</p></body>"
+                    response_data = f"<head><style>{style}</style></head><body><h1>Feeds</h1><p>{removal_status}</p></body>"
                     #print(style)
                 response = f"HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nContent-Length: {len(response_data)}\r\n\r\n{response_data}"
 
@@ -113,23 +114,18 @@ async def handle_request(client_socket, session) -> None:
     #print(response.encode())
     client_socket.close()
 
-def format_data(form_input: str, url: bool) -> str: #sigh. form_input is a list when adding an RSS feed. Don't ask how, but it works. May god have luck on anyone trying to fix that part.
 
-    form_input = form_input.split("=", 1)  # Splits from the first '=', outputting https%3A%2F%2Ffeeds.megaphone.fm%2Fnewheights
-    form_input = form_input[1].strip().replace("%3A", ":").replace("%2F", "/").replace("%2f", "/").replace("%2C"," ")
+def format_url(url: str):
+    print(url)
+    url = url.split("=", 1)  # Splits from the first '=', outputting https%3A%2F%2Ffeeds.megaphone.fm%2Fnewheights
+    url = url[1].strip().replace("%3A", ":").replace("%2F", "/").replace("%2f", "/").replace("%2C"," ")
 
-    #TODO: REMAKE THIS WHOLE THING, IT WORKS MAGICALLY BUT SUCKS AND IS A MASSIVE EYESORE.
 
-    if not url: #used for remove_feed
-        form_input = form_input.replace("+"," ")
-    elif "&RSS_url=" in form_input:
-        form_input: list = form_input.split("&RSS_url=")
-    
-    if type(form_input) == list:
-        form_input[0] = form_input[0].replace("+", " ")
+    if "&RSS_url=" in url:
+        url: list = url.split("&RSS_url=")
 
-    #print(f"After: {form_input}")
-    return form_input
+    #print(f"After: {url}")
+    return url
 
 async def main() -> None:
     HOST = get_server_info("Back/server_info.txt")[0].strip()
