@@ -2,7 +2,6 @@ from time import localtime
 import csv
 def handle_error(error) -> None:
     time = localtime()
-    time.tm_hour
     try:
         with open("error.txt","a") as f:
             f.write(f"{time.tm_mday}/{time.tm_mon} {time.tm_hour}:{time.tm_min}:{time.tm_sec}: {error}\n")
@@ -11,17 +10,18 @@ def handle_error(error) -> None:
         raise FileNotFoundError
     
     
-def add_url(dir: str, url: str) -> str:
+def add_url(dir: str, name_url: str) -> str:
     with open(dir, 'r') as file:
         lines = [line.strip() for line in file.readlines()]
-        print(lines)
-        name, url, = url
+        name, url, = name_url
 
         new_name, new_url = name.lower(), url.lower()
         for line in lines:
             split_line = line.lower().split(",")
-            if (new_name == split_line[0] or new_url == split_line[1]):
-                return f"feed {name} ({url}) is already in feeds!"
+            if (new_name == split_line[0]):
+                return f"feed {name} is already taken with url {split_line[1]}!"
+            if  (new_url == split_line[1]):
+                return f"{url} is already present at {split_line[0]}!"
 
     try:
 
@@ -71,6 +71,6 @@ def remove_feed(name: str, feeds_dir: str):
     
     
     if ('row_found' in locals()):
-        return f'{name} removed!'
+        return f'{name} removed successfully!'
     elif ('row_found' not in locals()):
         return f'{name} not found, file not overwritten!'
