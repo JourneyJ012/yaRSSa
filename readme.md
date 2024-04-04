@@ -63,8 +63,3 @@ https://python.org
 chmod +x start.sh
 ./start.sh
 ```
-
-
-## Errors
-
-The reporting system is yet to be added. Both `start.bat` and `start.sh` only writes the exception to `error.txt` so far. 
