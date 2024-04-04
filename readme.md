@@ -37,7 +37,7 @@ This error hasn't occurred in recent testing, but that doesn't mean it's fully g
 
 1. Have python installed 
 
-### Untested, but most likely python 3.6+, due to use of dictionaries.
+### Untested, but most likely python 3.5+, due to async.
 
 https://python.org
 
