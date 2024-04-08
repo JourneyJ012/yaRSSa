@@ -4,3 +4,5 @@
 Back/__pycache__
 #User options
 Back/user_feeds.csv
+#IP/Port
+Back/server_info.txt
