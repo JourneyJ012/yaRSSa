@@ -13,19 +13,27 @@ from RSS_stuff import parse_url
 
 
 def get_server_info(directory):
-    with open(directory, "r") as f:
+    with open(directory, "r", encoding="utf-8") as f:
         return f.readlines()
 
 
 async def handle_request(client_socket, session) -> None:
-    request_data = client_socket.recv(1024).decode()
-    # print("Received request data:", repr(request_data))
-    try:  # if request_lines but less error prone
+    try:
+        request_data = client_socket.recv(1024).decode()
+    except UnicodeDecodeError:
+        with open("error.txt","a") as f:
+            f.write("\n")
+            f.write(str(client_socket))
+        print(f"Error! client_socket written to error.txt!")
+    try:
         request_lines = request_data.split("\r\n")
         method, path, _ = request_lines[0].split()
-    except:
+    except UnboundLocalError:
         client_socket.sendall(b'HTTP/1.1 500 Internal Server Error')
         return None
+    except ValueError:
+        handle_error(request_data)
+        print("ValueError, request_data added to error.txt")
 
     try:
         if method in locals() and path in locals():

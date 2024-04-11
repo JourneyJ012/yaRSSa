@@ -1,6 +1,8 @@
 import xml.etree.ElementTree as ET
 import aiohttp
 import asyncio
+
+import aiohttp.client_exceptions
 from file_management import handle_error
 
 
@@ -15,23 +17,24 @@ async def fetch_feed(session, feed_name, url):
         handle_error(f"Invalid URL {url}")
     except aiohttp.client_exceptions.ClientConnectorError:
         print(f"URL {url} could not connect. This error has not been logged.")
+    except aiohttp.client_exceptions.ClientOSError as e:
+        if "[WinError 64] The specified network name is no longer available]" in str(e):
+            print(f"{url} cannot be found. The website could be gone, or it may be a DNS issue.")
+    except ConnectionResetError as e:
+        if "[WinError 10054 An existing connection was forcibly closed by the remote host]":
+            print(f"{url} rejected you.")
+    except aiohttp.client_exceptions.ServerDisconnectedError:
+        print(f"Server disconnected ({url})")
+
 
 
 async def fetch_all_feeds(session, user_feeds):
     tasks = []
     for feed_name, url in user_feeds.items():
         tasks.append(fetch_feed(session, feed_name, url))
-    try:
-        return await asyncio.gather(*tasks)
-    except aiohttp.ClientError as e:
-        print(f"Error fetching feeds: {e}")
-        return []
-
+    return await asyncio.gather(*tasks)
 
 async def parse_url(session, user_feeds_dir: str, user_choices_dir: str):
-    # TODO: split the getting of URLs into:
-    # Get URLs from a CSV file, as to allow titles of the feeds
-    # Make results a dictionary with the title and then the feed
 
     user_choices = get_choices(user_choices_dir)
     user_feeds = get_feeds(user_feeds_dir)
@@ -52,7 +55,7 @@ async def parse_url(session, user_feeds_dir: str, user_choices_dir: str):
                         choice_text = found_element.text
                         current_item.append(choice_text)
                     else:
-                        # print(f"Could not find {choice} in {item}")
+                        #print(f"Could not find {choice} in {item}")
                         pass
 
                 feed_items.append(current_item)
@@ -68,7 +71,6 @@ async def parse_url(session, user_feeds_dir: str, user_choices_dir: str):
     if "link" in user_choices:
         link_index = user_choices.index("link")
         has_link = True
-
     for sublist in results:
         inner_result = []
         for item in sublist:
@@ -79,6 +81,8 @@ async def parse_url(session, user_feeds_dir: str, user_choices_dir: str):
                     temp_result = "URL broken!"
                     handle_error(
                         """Broken URL caused broken response "URL broken!" This is due to an IndexError in Back/RSS_stuff.py. Please check your feeds in user_feeds.csv for any broken feeds.""")
+                    print(f"{item}\n\n\n{sublist}\n\n\n{results}")
+                    break
             else:
                 temp_result = ""
             for choice in user_choices:
@@ -94,8 +98,6 @@ async def parse_url(session, user_feeds_dir: str, user_choices_dir: str):
         # Between feeds, only 1 <br> tag appears. This sucks because 2 are meant to appear.
 
     results = "\n".join(final_results)
-#   with open("Back/results.txt","w") as f:
-#       f.write(str(results))
     return results
 
 
