@@ -79,9 +79,7 @@ async def parse_url(session, user_feeds_dir: str, user_choices_dir: str):
                     temp_result = f"<a href='{item[link_index]}'>{item[title_index]}</a>"
                 except IndexError:
                     temp_result = "URL broken!"
-                    handle_error(
-                        """Broken URL caused broken response "URL broken!" This is due to an IndexError in Back/RSS_stuff.py. Please check your feeds in user_feeds.csv for any broken feeds.""")
-                    print(f"{item}\n\n\n{sublist}\n\n\n{results}")
+                    handle_error("""Broken URL caused broken response "URL broken!" This is due to an IndexError in Back/RSS_stuff.py. Please check your feeds in user_feeds.csv for any broken feeds.""")
                     break
             else:
                 temp_result = ""
