@@ -34,7 +34,7 @@ async def fetch_all_feeds(session, user_feeds):
         tasks.append(fetch_feed(session, feed_name, url))
     return await asyncio.gather(*tasks)
 
-async def parse_url(session, user_feeds_dir: str, user_choices_dir: str):
+async def parse_feed_content(session, user_feeds_dir: str, user_choices_dir: str):
 
     user_choices = get_choices(user_choices_dir)
     user_feeds = get_feeds(user_feeds_dir)

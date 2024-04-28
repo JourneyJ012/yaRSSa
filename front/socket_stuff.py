@@ -6,7 +6,7 @@ import aiohttp
 sys.path.append(os.path.abspath(os.path.join(
     os.path.dirname(__file__), '..', 'back')))
 from file_management import handle_error, add_url, remove_feed
-from RSS_stuff import parse_url
+from RSS_stuff import parse_feed_content
 # These are imported after the sys.path.append(...) line due to the fact that they are in the ../Back/ folder.
 # If anyone knows of a better solution, please change this.
 # However, I would expect errors due to the fact that this has changed the path.
@@ -88,7 +88,7 @@ async def handle_request(client_socket, session) -> None:
 
             print("get_RSS triggered!")
 
-            feeds = await parse_url(
+            feeds = await parse_feed_content(
                 session=session,
                 user_feeds_dir="Back/user_feeds.csv",
                 user_choices_dir="Back/user_choices.txt"
