@@ -13,9 +13,7 @@ A simple RSS app in python that doesn't have sponsored content, ads or other cra
 
 ## Todo (closely ordered to when it comes out)
 
-- make remove feed always compare lower case.
 - auto-update functionality
-- restructure the code for `front/socket_stuff.py`'s `format_data` function.
 - mark items as read
 - fix the end of the last feed and the start of the first feed from showing up with 1 less `<br>`
 - fix Apostrophe's appearing as `â€™s`
@@ -29,10 +27,8 @@ A simple RSS app in python that doesn't have sponsored content, ads or other cra
 - error.txt has no leading 0's for date
 - Apostrophe's appear as `â€™s`
 - the end of the last feed and the start of the first feed from showing up closer
-- Non-existant elements on ANY item will cause a full crash (to be focused on first)
-- Python may keep the port used after throwing an error. 
-This error hasn't occurred in recent testing, but that doesn't mean it's fully gone.
-- Any URL with `"&RSS_url="` will not work due to how the code is made. If you wish to try fix this, look into `front/socket_stuff.py`'s `format_data` function. 
+- Python may keep the port used after throwing an error. (can no longer replicate, please provide info if this happens to you)
+- Any URL with `"&RSS_url="` will not work. (not planned to be fixed.)
 
 ## Installation
 
