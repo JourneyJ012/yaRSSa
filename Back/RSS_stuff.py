@@ -9,9 +9,12 @@ from file_management import handle_error
 async def fetch_feed(session, feed_name, url):
     try:
         async with session.get(url) as response:
+            response.raise_for_status()  # Raise an error for non-200 status codes
             response_text = await response.text()
             return response_text
-
+        
+    except aiohttp.ClientResponseError as e:
+        print(f"{feed_name} ({url}) gave error code {e.status}")
     except aiohttp.client_exceptions.InvalidURL:
         print(f"Invalid URL {url}")
         handle_error(f"Invalid URL {url}")

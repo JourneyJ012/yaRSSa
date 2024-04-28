@@ -5,9 +5,11 @@ def handle_error(error) -> None:
     try:
         with open("error.txt","a") as f:
             f.write(f"{time.tm_mday}/{time.tm_mon} {time.tm_hour}:{time.tm_min}:{time.tm_sec}: {error}\n")
-    except:
-        print(f"Error {error}, and error.txt not found!")
-        raise FileNotFoundError
+    except FileNotFoundError:
+        with open("error.txt","w") as f:
+            f.write("File was not here before, created!")
+    except PermissionError:
+        print(f"Not allowed to write to error.txt! Try moving to a new directory, or running with admin.")
     
     
 def add_url(dir: str, name_url: str) -> str:
