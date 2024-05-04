@@ -1,6 +1,6 @@
 # Yet another RSS app
 
-A simple RSS app in python that doesn't have sponsored content, ads or other crap.
+A simple RSS app in python that doesn't have sponsored content, ads or other crap. This likely isn't going to be updated for a long time.
 
 
 ## Features
@@ -9,17 +9,6 @@ A simple RSS app in python that doesn't have sponsored content, ads or other cra
 - Get specific items from RSS feeds (image, url, etc)
 - allow removal of feeds from the site
 - duplication check whilst adding
-
-
-## Todo (closely ordered to when it comes out)
-
-- auto-update functionality
-- mark items as read
-- fix the end of the last feed and the start of the first feed from showing up with 1 less `<br>`
-- fix Apostrophe's appearing as `â€™s`
-- make specific errors for every problem
-- plugins
-- flaresolverr support (further future)
 
 
 ## Known Problems
