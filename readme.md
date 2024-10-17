@@ -1,5 +1,7 @@
 # Yet another RSS app
 
+POST-CREATION: This was my first attempt at creating a bit of software. It isn't great, but it's a start. Please do not use this code in any real world scenarios, I know I certainly wouldn't.
+
 A simple RSS app in python that doesn't have sponsored content, ads or other crap. This likely isn't going to be updated for a long time.
 
 
